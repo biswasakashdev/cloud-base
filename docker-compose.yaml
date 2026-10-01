@@ -1,0 +1,33 @@
+services:
+  app:
+    build:
+    context: .
+    dockerfile: Dockerfile.dev
+    image: myproject-web:latest
+    
+    ports:
+      - "8501:8501"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: cloudbase-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: cloudbase
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: cloudbase
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U socialtrend -d socialtrend" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+volumes:
+  postgres-data:
